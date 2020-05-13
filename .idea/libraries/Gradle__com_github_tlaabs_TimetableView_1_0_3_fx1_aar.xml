@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.tlaabs:TimetableView:1.0.3-fx1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d71fb91b593aa02f888dc46ced2cbc62/jetified-TimetableView-1.0.3-fx1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d71fb91b593aa02f888dc46ced2cbc62/jetified-TimetableView-1.0.3-fx1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.tlaabs/TimetableView/1.0.3-fx1/de9ff7bbf911302466b795ebcb5abdbaa544481/TimetableView-1.0.3-fx1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

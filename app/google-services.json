@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "15817683189",
+    "firebase_url": "https://comusesign.firebaseio.com",
+    "project_id": "comusesign",
+    "storage_bucket": "comusesign.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15817683189:android:77a321ff2544c7c86bd5bc",
+        "android_client_info": {
+          "package_name": "com.example.comuse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15817683189-itemb3bnnmjb5ojv3h5th37vnukq97d8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.comuse",
+            "certificate_hash": "fd5059513a8aee95b85a271c27e996de53d20122"
+          }
+        },
+        {
+          "client_id": "15817683189-e2295123mmtvrgtlao5vkirk983l9n0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmV1s_YYjyBqJyzA2NrDZ9JTFUDk1-GQk"
+        },
+        {
+          "current_key": "AIzaSyDZ_ubqByLGteSmcDOx74v2u9lokUTicpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15817683189-14otrob8e3b4b4nsa9i6ofuoptjv2pi1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "15817683189-e91cadi3fb9t1s0ee91mmhbaogcg0n59.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Comuse"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15817683189:android:78f1a2e296f0e7b86bd5bc",
+        "android_client_info": {
+          "package_name": "com.example.comuse_google_sign"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15817683189-e9c6qrtrplquk2pklnqnpslmusprkk0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.comuse_google_sign",
+            "certificate_hash": "fd5059513a8aee95b85a271c27e996de53d20122"
+          }
+        },
+        {
+          "client_id": "15817683189-e2295123mmtvrgtlao5vkirk983l9n0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmV1s_YYjyBqJyzA2NrDZ9JTFUDk1-GQk"
+        },
+        {
+          "current_key": "AIzaSyDZ_ubqByLGteSmcDOx74v2u9lokUTicpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15817683189-14otrob8e3b4b4nsa9i6ofuoptjv2pi1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "15817683189-e91cadi3fb9t1s0ee91mmhbaogcg0n59.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Comuse"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

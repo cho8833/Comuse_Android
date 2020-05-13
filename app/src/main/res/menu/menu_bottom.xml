@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomMenuItem_Member"
+        android:title="@string/bottom_menu_member" />
+    <item
+        android:id="@+id/bottomMenuItem_TimeTable"
+        android:title="@string/bottom_menu_timetable" />
+    <item
+        android:id="@+id/bottomMenuItem_Settings"
+        android:title="@string/bottom_menu_settings" />
+</menu>

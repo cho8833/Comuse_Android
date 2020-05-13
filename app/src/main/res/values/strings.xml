@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Comuse</string>
+    <string name="bottom_menu_member">Members</string>
+    <string name="bottom_menu_timetable">TimeTable</string>
+    <string name="bottom_menu_settings">Settings</string>
+    <string name="textview">TextView</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="login_information">LogIn Info</string>
+    <string name="position">Position</string>
+    <string name="monday">MonDay</string>
+    <string name="tuesday">TuesDay</string>
+    <string name="wednesday">WednesDay</string>
+    <string name="thursday">ThursDay</string>
+    <string name="friday">FriDay</string>
+    <string name="saturday">SaturDay</string>
+    <string name="sunday">SunDay</string>
+    <string name="bottom_sheet_option_edit">Edit</string>
+    <string name="bottom_sheet_option_remove">Remove</string>
+    <string name="bottom_sheet_option_heading">Edit Time</string>
+    <string name="bottom_sheet_option_cancel">Cancel</string>
+    <string name="sign_out">Sign\nout</string>
+    <string name="edit">Edit</string>
+    <string name="title">Title</string>
+    <string-array name="timetable_header_title">
+        <item></item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>SAT</item>
+        <item>SUN</item>
+    </string-array>
+</resources>
