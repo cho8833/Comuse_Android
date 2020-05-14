@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.comuse.DataManager.MemberDataManager;
-import com.example.comuse.DataManager.ScheduleDataManager;
+import com.example.comuse.DataManager.MemberDataViewModel;
+import com.example.comuse.DataManager.ScheduleDataViewModel;
 import com.example.comuse.Fragment.MemberFragment;
 import com.example.comuse.Fragment.SettingsFragment;
 import com.example.comuse.Fragment.TimeTableFragment;
@@ -21,13 +24,33 @@ public class MainActivity extends AppCompatActivity {
     private MemberFragment memberFragment;
     private TimeTableFragment timeTableFragment;
     private SettingsFragment settingsFragment;
-    public static MemberDataManager memberDataManager;
-    public static ScheduleDataManager scheduleDataManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ViewModelProvider.Factory memberFactory = new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new MemberDataViewModel();
+            }
+        };
+        ViewModelProvider memberViewModelProvider = new ViewModelProvider(getViewModelStore(),memberFactory);
+        MemberDataViewModel memberViewModel = memberViewModelProvider.get(MemberDataViewModel.class);
+        memberViewModel.getMemberData(MainActivity.this);
+
+        ViewModelProvider.Factory scheduleFactory = new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new ScheduleDataViewModel();
+            }
+        };
+        ViewModelProvider scheduleViewModelProvider = new ViewModelProvider(getViewModelStore(),scheduleFactory);
+        ScheduleDataViewModel scheduleDataViewModel = scheduleViewModelProvider.get(ScheduleDataViewModel.class);
+        scheduleDataViewModel.getSchedules();
 
         fragmentManager = getSupportFragmentManager();
         memberFragment = new MemberFragment();

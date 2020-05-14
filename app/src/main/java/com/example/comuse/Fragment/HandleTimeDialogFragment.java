@@ -11,9 +11,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.comuse.Activity.Edit_AddTimeActivity;
-import com.example.comuse.DataManager.ScheduleDataManager;
+import com.example.comuse.DataManager.MemberDataViewModel;
+import com.example.comuse.DataManager.ScheduleDataViewModel;
 import com.example.comuse.R;
 import com.github.tlaabs.timetableview.Schedule;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -48,7 +51,7 @@ public class HandleTimeDialogFragment extends BottomSheetDialogFragment {
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ScheduleDataManager.removeScheduleData(selected);
+
                         dismiss();
                     }
                 });

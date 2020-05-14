@@ -1,4 +1,4 @@
-package com.example.comuse.DataModel;
+package com.example.comuse;
 
 public class Member {
 

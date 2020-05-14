@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +23,10 @@ import android.widget.TextView;
 
 import com.example.comuse.Activity.MainActivity;
 import com.example.comuse.DataManager.FirebaseVar;
-import com.example.comuse.DataManager.MemberDataManager;
-import com.example.comuse.DataManager.ScheduleDataManager;
+import com.example.comuse.DataManager.MemberDataViewModel;
+import com.example.comuse.Member;
 import com.example.comuse.R;
 import com.example.comuse.Activity.SignInActivity;
-import com.example.comuse.UpdateUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,8 +45,8 @@ public class SettingsFragment extends Fragment {
     TextView sign_inout_button;
     TextView button_position_edit;
     TextView text_position;
-    UpdateUI updateUI;
     Context context;
+    MemberDataViewModel memberViewModel;
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -58,12 +60,10 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        updateUI = new UpdateUI() {
-            @Override
-            public void updateUI() {
-                SettingsFragment.this.updateUI();
-            }
-        };
+        ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(((AppCompatActivity)context).getApplication());
+        memberViewModel = new ViewModelProvider(this,factory).get(MemberDataViewModel.class);
+
+
     }
 
     @Override
@@ -102,7 +102,12 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
-        updateUI();
+        memberViewModel.getMe().observe(this, new Observer<Member>() {
+            @Override
+            public void onChanged(Member member) {
+                SettingsFragment.this.updateUI();
+            }
+        });
         return mView;
     }
     private void updateUI()    {
@@ -120,7 +125,7 @@ public class SettingsFragment extends Fragment {
         }
         try {
             //myDataControl의 me 객체의 position을 받아와 textView에 띄움
-            String position = MemberDataManager.getMe().getPosition();
+            String position = memberViewModel.getMe().getValue().getPosition();
             text_position.setText(position);
         } catch (NullPointerException e)    {
             //me가 null일 때(login이 되지 않았을 때) textView setting
@@ -149,7 +154,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String position = editText.getText().toString();
-                MemberDataManager.updatePosition(context,position,updateUI);
+                memberViewModel.updatePosition(context,position);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -164,7 +169,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        MemberDataManager.saveMemberData(context);
+        memberViewModel.saveMemberData(context);
     }
     private void removeAccount() {
         FirebaseVar.user.delete()
@@ -176,8 +181,7 @@ public class SettingsFragment extends Fragment {
                         FirebaseVar.membersListener = null;
                         FirebaseVar.db = null;
                         FirebaseVar.schedulesListener = null;
-                        MemberDataManager.members.clear();
-                        ScheduleDataManager.schedules.clear();
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -222,8 +226,7 @@ public class SettingsFragment extends Fragment {
                                                     FirebaseVar.membersListener = null;
                                                     FirebaseVar.db = null;
                                                     FirebaseVar.schedulesListener = null;
-                                                    MemberDataManager.members.clear();
-                                                    ScheduleDataManager.schedules.clear();
+
                                                     Intent intent = new Intent(context, MainActivity.class);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     context.startActivity(intent);
@@ -232,7 +235,6 @@ public class SettingsFragment extends Fragment {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    updateUI.updateUI();
                                                 }
                                             });
                                 }

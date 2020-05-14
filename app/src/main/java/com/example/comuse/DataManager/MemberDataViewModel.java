@@ -5,10 +5,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.comuse.DataModel.Member;
-import com.example.comuse.NotifyAdapter;
-import com.example.comuse.UpdateUI;
+import com.example.comuse.Member;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentChange;
@@ -16,23 +17,20 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class MemberDataManager {
-    public static Member me;
-    public static Member getMe() {
+public class MemberDataViewModel extends ViewModel {
+    public final MutableLiveData<Member> me = new MutableLiveData<>();
+    public LiveData<Member> getMe() {
         return me;
     }
     //MARK: Manage Server Data Methods
-    public static void getMemberData(final Context context, final UpdateUI updateUI) {
+    public void getMemberData(final Context context) {
         if (loadMemberData(context) == true) {
             return;
         } else {
@@ -46,11 +44,11 @@ public class MemberDataManager {
                                     Member data = documentSnapshot.toObject(Member.class);
                                     if (data == null) {
                                         //set
-                                        addMemberData(context, false, null, updateUI);
+                                        addMemberData(context, false, null);
                                     } else {
-                                        me = documentSnapshot.toObject(Member.class);
+                                        Member myData =documentSnapshot.toObject(Member.class);
+                                        me.setValue(myData);
                                         saveMemberData(context);
-                                        updateUI.updateUI();
                                     }
                                 }
                             })
@@ -64,7 +62,7 @@ public class MemberDataManager {
             }
         }
     }
-    public static void addMemberData(final Context context, Boolean inoutStatus, String position, @Nullable final UpdateUI updateUI) {
+    public void addMemberData(final Context context, Boolean inoutStatus, String position) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
                 final Member newData = new Member(FirebaseVar.user.getDisplayName(),FirebaseVar.user.getUid(),inoutStatus,position);
@@ -73,15 +71,14 @@ public class MemberDataManager {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me = newData;
+                                me.setValue(newData);
                                 saveMemberData(context);
-
                             }
                         });
             }
         }
     }
-    public static void removeMemberData(final Context context) {
+    public void removeMemberData(final Context context) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
                 FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
@@ -89,14 +86,14 @@ public class MemberDataManager {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me = null;
+                                me.setValue(null);
                                 removeSavedData(context);
                             }
                         });
             }
         }
     }
-    public static void updateInOut(final Context context, final Boolean inoutStatus, @Nullable final UpdateUI updateUI) {
+    public void updateInOut(final Context context, final Boolean inoutStatus) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
                 FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
@@ -104,17 +101,15 @@ public class MemberDataManager {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.setInoutStatus(inoutStatus);
+                                me.getValue().setInoutStatus(inoutStatus);
                                 updateSavedData(context,inoutStatus,null);
-                                if(updateUI != null) {
-                                    updateUI.updateUI();
-                                }
+
                             }
                         });
             }
         }
     }
-    public static void updatePosition(final Context context, final String position,@Nullable final UpdateUI updateUI) {
+    public void updatePosition(final Context context, final String position) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
                 FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
@@ -122,11 +117,9 @@ public class MemberDataManager {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.setPosition(position);
+                                me.getValue().setPosition(position);
                                 updateSavedData(context,null,position);
-                                if (updateUI != null) {
-                                    updateUI.updateUI();
-                                }
+
                             }
                         });
             }
@@ -134,34 +127,37 @@ public class MemberDataManager {
     }
 
     //MARK: Manage local Data Methods
-    public static void saveMemberData(Context context) {
+    public void saveMemberData(Context context) {
         if(me != null) {
             SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString("name",me.getName());
-            editor.putString("position",me.getPosition());
-            editor.putBoolean("inoutStatus",me.getInoutStatus());
-            editor.putString("uid",me.getUid());
+            editor.putString("name",me.getValue().getName());
+            editor.putString("position",me.getValue().getPosition());
+            editor.putBoolean("inoutStatus",me.getValue().getInoutStatus());
+            editor.putString("uid",me.getValue().getUid());
             editor.commit();
 
         }
     }
-    public static Boolean loadMemberData(Context context) {
+    public Boolean loadMemberData(Context context) {
         if(me == null) {
             SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
-            String me_fromJson = sp.getString("me","");
-            Gson gson = new GsonBuilder().create();
-            me = gson.fromJson(me_fromJson,Member.class);
-            if(me == null) {
-                return false;
-            } else {
+            String name = sp.getString("name",null);
+            String uid = sp.getString("uid",null);
+            Boolean inoutStatus = sp.getBoolean("inoutStatus",false);
+            String position = sp.getString("position",null);
+            if (name != null && uid != null) {
+                Member savedData = new Member(name, uid, inoutStatus, position);
+                me.setValue(savedData);
                 return true;
+            } else {
+                return false;
             }
         } else {
             return false;
         }
     }
-    public static void updateSavedData(Context context, Boolean inoutStatus, String position) {
+    public void updateSavedData(Context context, Boolean inoutStatus, String position) {
         SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         if (inoutStatus != null) {
@@ -171,7 +167,7 @@ public class MemberDataManager {
         }
         editor.commit();
     }
-    public static void removeSavedData(Context context) {
+    public void removeSavedData(Context context) {
         SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.clear();
@@ -179,8 +175,9 @@ public class MemberDataManager {
 
     }
     //MARK: -Members Control
-    public static ArrayList<Member> members = new ArrayList<>();
-    public static void getMembers(final NotifyAdapter notify) {
+    public MutableLiveData<ArrayList<Member>> membersLiveData = new MutableLiveData<>();
+    public ArrayList<Member> members = new ArrayList<>();
+    public void getMembers() {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
                 FirebaseVar.membersListener = FirebaseVar.db.collection("Members")
@@ -196,8 +193,6 @@ public class MemberDataManager {
                                     switch (dc.getType()) {
                                         case ADDED:
                                             members.add(0,data);
-                                            // notify
-                                            notify.notifyInsertToAdapter(0);
                                             break;
                                         case MODIFIED:
                                             for (Member compare : members) {
@@ -205,7 +200,6 @@ public class MemberDataManager {
                                                     int index = members.indexOf(compare);
                                                     members.remove(index);
                                                     members.add(index,data);
-                                                    notify.notifyChangeToAdapter(index,data);
                                                     break;
                                                 }
                                             }
@@ -216,13 +210,13 @@ public class MemberDataManager {
                                                 if (compare.getUid().equals(dc.getDocument().toObject(Member.class).getUid())) {
                                                     int position = members.indexOf(compare);
                                                     members.remove(position);
-                                                    notify.notifyRemoveToAdapter(position);
                                                     break;
                                                 }
                                             }
                                             break;
                                     }
                                 }
+                                membersLiveData.setValue(members);
                             }
                         });
             }

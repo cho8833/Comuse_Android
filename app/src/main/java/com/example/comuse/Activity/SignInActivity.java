@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.comuse.DataManager.FirebaseVar;
-import com.example.comuse.DataManager.MemberDataManager;
+import com.example.comuse.DataManager.MemberDataViewModel;
 import com.example.comuse.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -78,7 +78,6 @@ public class SignInActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            MemberDataManager.getMemberData(SignInActivity.this,null);
                             FirebaseVar.user = mAuth.getCurrentUser();
                             FirebaseVar.db = FirebaseFirestore.getInstance();
                             startActivity(intent);

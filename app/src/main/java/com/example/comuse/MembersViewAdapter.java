@@ -2,15 +2,13 @@ package com.example.comuse;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.comuse.DataModel.Member;
+import com.example.comuse.databinding.MemberItemLayoutBinding;
 
 import java.util.ArrayList;
 
@@ -30,22 +28,14 @@ public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.member_item_layout,parent,false);
-        return new ViewHolder(view);
+        MemberItemLayoutBinding binding = DataBindingUtil.inflate(inflater,R.layout.member_item_layout,parent,false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Member member = members.get(position);
-        holder.name.setText(member.getName());
-        // Inout에 따라 status circle을 다르게 불러옴
-        // true: 초록색 원(online_status)
-        // false: 회색 원(offline_status)
-        if(member.getInoutStatus() == true)
-            holder.inout.setImageResource(R.drawable.online_status);
-        else
-            holder.inout.setImageResource(R.drawable.offline_status);
-        holder.position.setText(member.getPosition());
+        holder.bind(member);
     }
 
     @Override
@@ -54,17 +44,20 @@ public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.
     }
 
     class ViewHolder  extends RecyclerView.ViewHolder  {
+        MemberItemLayoutBinding itemBinding;
 
-        TextView name;
-        ImageView inout;
-        TextView position;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            name = itemView.findViewById(R.id.member_name);
-            inout = itemView.findViewById(R.id.inout_image);
-            position = itemView.findViewById(R.id.member_position);
+        public ViewHolder(@NonNull MemberItemLayoutBinding binding) {
+            super(binding.getRoot());
+            this.itemBinding = binding;
         }
+        public void bind(Member member) {
+            itemBinding.setMember(member);
+            if(member.getInoutStatus()) {
+                itemBinding.inoutImage.setImageResource(R.drawable.online_status);
+            } else
+                itemBinding.inoutImage.setImageResource(R.drawable.offline_status);
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.comuse.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.comuse.DataManager.FirebaseVar;
-import com.example.comuse.DataManager.ScheduleDataManager;
+import com.example.comuse.DataManager.ScheduleDataViewModel;
 import com.example.comuse.R;
 import com.github.tlaabs.timetableview.Schedule;
 import com.github.tlaabs.timetableview.Time;
@@ -38,11 +39,14 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
     TextView confirmButton;
     TextView cancelButton;
     EditText titleEdit;
+    ScheduleDataViewModel scheduleDataViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit__add_time);
-
+        ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication());
+        ViewModelProvider provider = new ViewModelProvider(this,factory);
+        scheduleDataViewModel = provider.get(ScheduleDataViewModel.class);
         //find Views
         confirmButton = findViewById(R.id.editTime_confirm);
         cancelButton = findViewById(R.id.editTime_cancel);
@@ -113,7 +117,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                     newData.setDay(day);
                     newData.setProfessorName(get.getProfessorName());
                     String documentName = ""+get.getStartTime().getHour()+get.getStartTime().getMinute()+get.getEndTime().getHour()+get.getEndTime().getMinute()+get.getDay();
-                    ScheduleDataManager.updateScheduleData(newData,documentName);
+                    scheduleDataViewModel.updateScheduleData(newData,documentName);
                     finish();
                 } else {
                     //TimeInvalid
@@ -146,7 +150,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                     newData.setStartTime(new Time(start_hour,start_min));
                     newData.setEndTime(new Time(end_hour,end_min));
                     newData.setClassTitle(title);
-                    ScheduleDataManager.addScheduleData(newData);
+                    scheduleDataViewModel.addScheduleData(newData);
                     finish();
                 } else {
                     //TimeInvalid
@@ -171,7 +175,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
         }
 
         // 다른 scheduledata와 비교하여 겹치면 edit 불가
-        for(Schedule scheduleData : ScheduleDataManager.schedules) {
+        for(Schedule scheduleData : scheduleDataViewModel.schedules) {
             if(scheduleData.getDay() == day) {
                         /* editData의 endTime과 비교데이터의 startTime 비교
                          editData의 startTime과 비교데이터의 endTime 비교 */
