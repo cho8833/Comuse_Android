@@ -183,6 +183,9 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                         ((scheduleData.getEndTime().getHour() == start_hour) && (scheduleData.getEndTime().getMinute() > start_min))) {
                     return false;
                 }
+                if ((scheduleData.getEndTime().getHour() < end_hour) || (scheduleData.getStartTime().getHour() > start_hour)) {
+                    return false;
+                }
             }
         }
         return true;
