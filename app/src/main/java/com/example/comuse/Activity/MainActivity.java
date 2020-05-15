@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         ViewModelProvider memberViewModelProvider = new ViewModelProvider(getViewModelStore(),memberFactory);
         MemberDataViewModel memberViewModel = memberViewModelProvider.get(MemberDataViewModel.class);
         memberViewModel.getMemberData(MainActivity.this);
-
+        memberViewModel.getMembers();
         ViewModelProvider.Factory scheduleFactory = new ViewModelProvider.Factory() {
             @NonNull
             @Override

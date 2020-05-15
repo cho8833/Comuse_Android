@@ -101,7 +101,8 @@ public class MemberDataViewModel extends ViewModel {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.getValue().setInoutStatus(inoutStatus);
+                                me.setValue(new Member(me.getValue().getName(),me.getValue().getUid(),inoutStatus,me.getValue().getPosition()));
+                                //me.getValue().setInoutStatus(inoutStatus);
                                 updateSavedData(context,inoutStatus,null);
 
                             }
@@ -117,7 +118,8 @@ public class MemberDataViewModel extends ViewModel {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.getValue().setPosition(position);
+                                me.setValue(new Member(me.getValue().getName(),me.getValue().getUid(),me.getValue().getInoutStatus(),position));
+                                //me.getValue().setPosition(position);
                                 updateSavedData(context,null,position);
 
                             }
@@ -128,7 +130,7 @@ public class MemberDataViewModel extends ViewModel {
 
     //MARK: Manage local Data Methods
     public void saveMemberData(Context context) {
-        if(me != null) {
+        if(me.getValue() != null) {
             SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("name",me.getValue().getName());
@@ -196,7 +198,7 @@ public class MemberDataViewModel extends ViewModel {
                                             break;
                                         case MODIFIED:
                                             for (Member compare : members) {
-                                                if (compare.getUid() == data.getUid()) {
+                                                if (compare.getUid().equals(data.getUid())) {
                                                     int index = members.indexOf(compare);
                                                     members.remove(index);
                                                     members.add(index,data);

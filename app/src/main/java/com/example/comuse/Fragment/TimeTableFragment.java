@@ -7,8 +7,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +50,7 @@ public class TimeTableFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(((AppCompatActivity)context).getApplication());
-        scheduleDataViewModel = new ViewModelProvider(this,factory).get(ScheduleDataViewModel.class);
+        scheduleDataViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(ScheduleDataViewModel.class);
         onClickListener = new ScheduleOnClickListener();
         onClickListener.setContext(context);
 
@@ -77,11 +79,15 @@ public class TimeTableFragment extends Fragment {
         if (FirebaseVar.schedulesListener == null) {
             scheduleDataViewModel.getSchedules();
         }
-        scheduleDataViewModel.schedulesLiveData.observe(this, new Observer<ArrayList<Schedule>>() {
+        scheduleDataViewModel.schedulesLiveData.observe((LifecycleOwner) context, new Observer<ArrayList<Schedule>>() {
             @Override
             public void onChanged(ArrayList<Schedule> schedules) {
                 timeTable.removeAll();
-                timeTable.add(scheduleDataViewModel.schedules);
+                for(Schedule schedule : schedules) {
+                    ArrayList<Schedule> append = new ArrayList<>();
+                    append.add(schedule);
+                    timeTable.add(append);
+                }
             }
         });
         return mView;

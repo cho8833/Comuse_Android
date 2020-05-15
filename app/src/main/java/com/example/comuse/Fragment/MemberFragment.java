@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +33,7 @@ public class MemberFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
     MembersViewAdapter adapter;
     MemberDataViewModel memberViewModel;
+    Observer<Member> myDataObserver;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -45,17 +48,14 @@ public class MemberFragment extends Fragment {
         // RecyclerView Adapter Settings
         adapter = new MembersViewAdapter();
         adapter.setContext(context);
-        final Observer<Member> myDataObserver = new Observer<Member>() {
+        myDataObserver = new Observer<Member>() {
             @Override
             public void onChanged(Member member) {
-                updateUI();
+                MemberFragment.this.updateUI();
             }
         };
-        ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(((AppCompatActivity)context).getApplication());
-        memberViewModel = new ViewModelProvider(this,factory).get(MemberDataViewModel.class);
-        memberViewModel.getMe().observe(this,myDataObserver);
-
-
+        ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication());
+        memberViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(MemberDataViewModel.class);
     }
 
     @Override
@@ -72,14 +72,15 @@ public class MemberFragment extends Fragment {
         recycler.setLayoutManager(manager);
         bindItem(recycler,memberViewModel.members);
         if (FirebaseVar.membersListener == null) {
-            memberViewModel.getMemberData(context);
+            memberViewModel.getMembers();
         }
-        memberViewModel.membersLiveData.observe(this, new Observer<ArrayList<Member>>() {
+        memberViewModel.membersLiveData.observe((LifecycleOwner) context, new Observer<ArrayList<Member>>() {
             @Override
             public void onChanged(ArrayList<Member> members) {
                 bindItem(recycler,members);
             }
         });
+        memberViewModel.getMe().observe((LifecycleOwner) context,myDataObserver);
         return mView;
     }
     private void updateUI() {
@@ -137,7 +138,7 @@ public class MemberFragment extends Fragment {
         memberViewModel.saveMemberData(context);
     }
     @BindingAdapter("tools:item")
-    public static void bindItem(RecyclerView recyclerView, ArrayList<Member> members) {
+    public void bindItem(RecyclerView recyclerView, ArrayList<Member> members) {
         MembersViewAdapter adapter = (MembersViewAdapter)recyclerView.getAdapter();
         if (adapter != null) {
             adapter.setMembers(members);

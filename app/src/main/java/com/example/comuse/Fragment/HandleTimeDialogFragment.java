@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.comuse.Activity.Edit_AddTimeActivity;
 import com.example.comuse.DataManager.MemberDataViewModel;
@@ -24,10 +25,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class HandleTimeDialogFragment extends BottomSheetDialogFragment {
     Context context;
     Schedule selected;
-
+    ScheduleDataViewModel scheduleDataViewModel;
     public HandleTimeDialogFragment(Context context, Schedule selected) {
         this.context = context;
         this.selected = selected;
+        ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(((AppCompatActivity)context).getApplication());
+        scheduleDataViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(ScheduleDataViewModel.class);
     }
 
     @Nullable
@@ -51,7 +54,7 @@ public class HandleTimeDialogFragment extends BottomSheetDialogFragment {
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        scheduleDataViewModel.removeScheduleData(selected);
                         dismiss();
                     }
                 });

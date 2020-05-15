@@ -10,8 +10,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,7 +63,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(((AppCompatActivity)context).getApplication());
-        memberViewModel = new ViewModelProvider(this,factory).get(MemberDataViewModel.class);
+        memberViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(MemberDataViewModel.class);
 
 
     }
@@ -102,7 +104,7 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
-        memberViewModel.getMe().observe(this, new Observer<Member>() {
+        memberViewModel.getMe().observe((LifecycleOwner) context, new Observer<Member>() {
             @Override
             public void onChanged(Member member) {
                 SettingsFragment.this.updateUI();
@@ -164,6 +166,13 @@ public class SettingsFragment extends Fragment {
             }
         });
         return builder;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
     }
 
     @Override
@@ -220,6 +229,8 @@ public class SettingsFragment extends Fragment {
                                                     SharedPreferences.Editor editor = pf.edit();
                                                     editor.clear();
                                                     editor.commit();
+
+                                                    FirebaseVar.user.delete();
 
                                                     FirebaseAuth.getInstance().signOut();
                                                     FirebaseVar.user = null;
