@@ -12,6 +12,9 @@ import com.example.comuse.databinding.MemberItemLayoutBinding;
 
 import java.util.ArrayList;
 
+/*
+    RecyclerView Adapter
+ */
 public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.ViewHolder> {
     ArrayList<Member> members;
     Context context;

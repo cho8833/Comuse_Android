@@ -33,7 +33,6 @@ public class MemberFragment extends Fragment {
     CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
     MembersViewAdapter adapter;
     MemberDataViewModel memberViewModel;
-    Observer<Member> myDataObserver;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -45,15 +44,11 @@ public class MemberFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // RecyclerView Adapter Settings
+
+        // RecyclerView Adapter initialize
         adapter = new MembersViewAdapter();
         adapter.setContext(context);
-        myDataObserver = new Observer<Member>() {
-            @Override
-            public void onChanged(Member member) {
-                MemberFragment.this.updateUI();
-            }
-        };
+
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication());
         memberViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(MemberDataViewModel.class);
     }
@@ -63,14 +58,20 @@ public class MemberFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View mView = inflater.inflate(R.layout.fragment_member, container, false);
+
+        // inOutSwitch Setting
         inoutSwitch = mView.findViewById(R.id.inout_switch);
         onCheckedChangeListener = initOnCheckedListener();
         configInOutSwitch(inoutSwitch,onCheckedChangeListener);
+
+        // RecyclerView Setting
         final RecyclerView recycler = mView.findViewById(R.id.recycler_members);
         LinearLayoutManager manager = new LinearLayoutManager(context);
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(manager);
         bindItem(recycler,memberViewModel.members);
+
+        // ViewModel Setting
         if (FirebaseVar.membersListener == null) {
             memberViewModel.getMembers();
         }
@@ -80,7 +81,13 @@ public class MemberFragment extends Fragment {
                 bindItem(recycler,members);
             }
         });
-        memberViewModel.getMe().observe((LifecycleOwner) context,myDataObserver);
+        memberViewModel.getMe().observe((LifecycleOwner) context, new Observer<Member>() {
+            @Override
+            public void onChanged(Member member) {
+                MemberFragment.this.updateUI();
+            }
+        });
+
         return mView;
     }
     private void updateUI() {
@@ -127,16 +134,12 @@ public class MemberFragment extends Fragment {
         };
         return onCheckedChangeListener;
     }
-    //MARK:- inoutswitch에 onclicklistener 연결
+    // inOutSwitch 의 OnCheckedListener 연결
     private void configInOutSwitch(final Switch inout_switch, CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
         inout_switch.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        memberViewModel.saveMemberData(context);
-    }
+    // RecyclerView 에 데이터 바인딩
     @BindingAdapter("tools:item")
     public void bindItem(RecyclerView recyclerView, ArrayList<Member> members) {
         MembersViewAdapter adapter = (MembersViewAdapter)recyclerView.getAdapter();

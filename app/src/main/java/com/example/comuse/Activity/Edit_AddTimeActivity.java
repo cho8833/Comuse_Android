@@ -24,11 +24,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/*
+    Edit/AddTimeActivity 는 TimeTableFragment 의 addScheduleButton 을 클릭했을 때, HandleTimeDialog 의 Edit 버튼을 클릭했을 때 생성된다.
+    addScheduleButton 을 클릭했을 때에는 Schedule 타입의 get 객체가 전달되지 않아 null 이고, addUI 함수가 호출된다.
+    HandleTimeDialog 의 Edit 버튼을 클릭했을 때에는 get 객체에 클릭된 Schedule 의 데이터가 전달되고 editUI 함수가 호출된다.
+ */
 public class Edit_AddTimeActivity extends AppCompatActivity {
     TimePicker picker_start;
     TimePicker picker_end;
-
     Spinner day_spinner;
     int day;
     int start_hour;
@@ -44,9 +47,12 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit__add_time);
+
+        // get ViewModel
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication());
-        ViewModelProvider provider = new ViewModelProvider(this,factory);
+        ViewModelProvider provider = new ViewModelProvider(this, factory);
         scheduleDataViewModel = provider.get(ScheduleDataViewModel.class);
+
         //find Views
         confirmButton = findViewById(R.id.editTime_confirm);
         cancelButton = findViewById(R.id.editTime_cancel);
@@ -75,13 +81,15 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 day = position;
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+        // get 데이터 받기
         Intent intent = getIntent();
-        get = (Schedule)intent.getSerializableExtra("get");
+        get = (Schedule) intent.getSerializableExtra("get");
         try {
             get.getProfessorName();
             editUI();
@@ -90,15 +98,17 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
         }
     }
 
+    //get 객체를 받아와 view 들의 초기 표시 데이터 초기화
     private void editUI() {
+        // 초기 데이터로 view 초기화
         titleEdit.setText(get.getClassTitle());
-
         picker_start.setHour(get.getStartTime().getHour());
         picker_start.setMinute(get.getStartTime().getMinute());
         picker_end.setHour(get.getEndTime().getHour());
         picker_end.setMinute(get.getEndTime().getMinute());
-
         day_spinner.setSelection(get.getDay());
+
+        // button 초기
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,9 +131,8 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                     finish();
                 } else {
                     //TimeInvalid
+                    return;
                 }
-
-
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +142,8 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
             }
         });
     }
+
+    // 화면에 표시할 초기 데이터가 없기 때문에 button init
     private void addUI() {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +176,8 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
             }
         });
     }
+
+    //MARK: -Privates
     private Boolean checkTimeValid(int start_hour, int start_min, int end_hour, int end_min, int day, String title) {
         if(title.isEmpty() == true) {
             return false;

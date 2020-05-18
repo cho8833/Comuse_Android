@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ViewModel 의 데이터 통신 활성화
         ViewModelProvider.Factory memberFactory = new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         ScheduleDataViewModel scheduleDataViewModel = scheduleViewModelProvider.get(ScheduleDataViewModel.class);
         scheduleDataViewModel.getSchedules();
 
+        // Fragment Setting
         fragmentManager = getSupportFragmentManager();
         memberFragment = new MemberFragment();
         timeTableFragment = new TimeTableFragment();

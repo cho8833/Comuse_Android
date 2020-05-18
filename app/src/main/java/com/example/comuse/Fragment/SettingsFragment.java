@@ -237,7 +237,7 @@ public class SettingsFragment extends Fragment {
                                                     FirebaseVar.membersListener = null;
                                                     FirebaseVar.db = null;
                                                     FirebaseVar.schedulesListener = null;
-
+                                                    memberViewModel.removeSavedData(context);
                                                     Intent intent = new Intent(context, MainActivity.class);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     context.startActivity(intent);

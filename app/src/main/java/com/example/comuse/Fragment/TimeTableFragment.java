@@ -62,9 +62,12 @@ public class TimeTableFragment extends Fragment {
         // Inflate the layout for this fragment
         View mView = inflater.inflate(R.layout.fragment_time_table, container, false);
 
+        // TimeTable Setting
         timeTable = mView.findViewById(R.id.timetable);
-        addScheduleButton = mView.findViewById(R.id.addSchedule_btn);
         timeTable.setOnStickerSelectEventListener(onClickListener);
+
+        // AddScheduleButton Setting
+        addScheduleButton = mView.findViewById(R.id.addSchedule_btn);
         addScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,9 +76,10 @@ public class TimeTableFragment extends Fragment {
                     intent.putExtra("scheduleDatas", scheduleDataViewModel.schedules);
                     startActivity(intent);
                 }
-
             }
         });
+
+        // ViewModel Setting
         if (FirebaseVar.schedulesListener == null) {
             scheduleDataViewModel.getSchedules();
         }
