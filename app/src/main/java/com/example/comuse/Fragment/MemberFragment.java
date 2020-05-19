@@ -49,8 +49,21 @@ public class MemberFragment extends Fragment {
         adapter = new MembersViewAdapter();
         adapter.setContext(context);
 
+        // get ViewModel
         ViewModelProvider.Factory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication());
         memberViewModel = new ViewModelProvider((ViewModelStoreOwner) context,factory).get(MemberDataViewModel.class);
+    }
+
+    /*
+        Fragment 가 resume 될 때마다 모든 사용자를 불러오는 snapshot listener 를 검사한다.
+        로그아웃 -> 로그인 상태로 바뀌면 FirebaseVar.user 에 사용자 데이터가 저장된다. memberViewModel.getMembers 는 user 의 null 여부에 따라 snapshot listener 를 활성화한다.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (FirebaseVar.membersListener == null) {
+            memberViewModel.getMembers();
+        }
     }
 
     @Override
@@ -72,9 +85,6 @@ public class MemberFragment extends Fragment {
         bindItem(recycler,memberViewModel.members);
 
         // ViewModel Setting
-        if (FirebaseVar.membersListener == null) {
-            memberViewModel.getMembers();
-        }
         memberViewModel.membersLiveData.observe((LifecycleOwner) context, new Observer<ArrayList<Member>>() {
             @Override
             public void onChanged(ArrayList<Member> members) {

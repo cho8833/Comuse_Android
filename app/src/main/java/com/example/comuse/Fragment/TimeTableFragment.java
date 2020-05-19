@@ -55,6 +55,17 @@ public class TimeTableFragment extends Fragment {
         onClickListener.setContext(context);
 
     }
+    /*
+        Fragment 가 resume 될 때마다 모든 schedule 을 불러오는 snapshot listener 를 검사한다.
+        로그아웃 -> 로그인 상태로 바뀌면 FirebaseVar.user 에 사용자 데이터가 저장된다. scheduleDataViewModel.getSchedules 는 user 의 null 여부에 따라 snapshot listener 를 활성화한다.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (FirebaseVar.schedulesListener == null) {
+            scheduleDataViewModel.getSchedules();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,9 +91,6 @@ public class TimeTableFragment extends Fragment {
         });
 
         // ViewModel Setting
-        if (FirebaseVar.schedulesListener == null) {
-            scheduleDataViewModel.getSchedules();
-        }
         scheduleDataViewModel.schedulesLiveData.observe((LifecycleOwner) context, new Observer<ArrayList<Schedule>>() {
             @Override
             public void onChanged(ArrayList<Schedule> schedules) {
