@@ -39,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.example.comuse.Activity.MainActivity.generateSimpleAlertDialog;
 
 
 public class SettingsFragment extends Fragment {
@@ -78,7 +79,6 @@ public class SettingsFragment extends Fragment {
         sign_inout_button = mView.findViewById(R.id.button_sign_inout);
         button_position_edit = mView.findViewById(R.id.button_position_edit);
         text_position = mView.findViewById(R.id.position_text);
-        button_position_edit = mView.findViewById(R.id.button_position_edit);
 
         sign_inout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +185,7 @@ public class SettingsFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // user delete complete without reauthenticate
                         FirebaseAuth.getInstance().signOut();
                         FirebaseVar.user = null;
                         FirebaseVar.membersListener = null;
@@ -197,6 +198,7 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         if(e.getClass() == FirebaseAuthRecentLoginRequiredException.class) {
+                            // need re-login with password
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("계정 삭제");
                             builder.setMessage("비밀번호를 입력하세요");
@@ -225,10 +227,7 @@ public class SettingsFragment extends Fragment {
 
 
                                                     //Delete Local myMemberData
-                                                    SharedPreferences pf = context.getSharedPreferences("me",Context.MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = pf.edit();
-                                                    editor.clear();
-                                                    editor.commit();
+                                                    memberViewModel.removeSavedData(context);
 
                                                     FirebaseVar.user.delete();
 
@@ -246,6 +245,8 @@ public class SettingsFragment extends Fragment {
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
+                                                    // reauthenticate failed
+                                                    generateSimpleAlertDialog(e.getMessage(), context);
                                                 }
                                             });
                                 }

@@ -27,12 +27,12 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
     class Member
         private String name;            // 멤버의 이름, FirebaseUser.name 저장
 
-        private String uid;             // Member class의 고유데이터
+        private String uid;             // Member class 의 고유데이터
                                         // FireStore Database 의 User 의 데이터를 저장할 때 document name 을 uid 로 저장한다.
                                         // Schedule 을 생성할 때 작성자 구분을 위해 professorName property 에 uid 를 저장한다.
 
         private Boolean inoutStatus;    // 멤버의 inout 상터태
-        private String position;        // 멤버의 포지션, Setting에서 edit 가능
+        private String position;        // 멤버의 포지션, Setting 에서 edit 가능
 
     Member Data 는 FireStore/Members Collection 에 문서 이름은 Member.uid 로 저장된다.
     자신의 Member Data 는 MutableLiveData 타입의 me 라는 객체에 저장이 되고, SharedPreference 기능을 통해 local 에 save 하고 load 하여
@@ -207,6 +207,11 @@ public class MemberDataViewModel extends ViewModel {
 
     }
     //MARK: -All Members Control Method
+    /*
+        모든 Member 은 SnapShot 리스너를 통해 실시간으로 View(RecyclerView) 에 파급된다.
+        MemberFragment 내의 observer 가 membersLiveData 를 구독하여 DocumentChange 가 발생하면 members 데이터를 수정하고
+        membersLiveData.setValue 를 통해 notify 한다.
+     */
     public MutableLiveData<ArrayList<Member>> membersLiveData = new MutableLiveData<>();
     public ArrayList<Member> members = new ArrayList<>();
     public void getMembers() {

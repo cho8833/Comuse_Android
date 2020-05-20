@@ -24,6 +24,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.comuse.Activity.MainActivity.generateSimpleAlertDialog;
+
 /*
     Edit/AddTimeActivity 는 TimeTableFragment 의 addScheduleButton 을 클릭했을 때, HandleTimeDialog 의 Edit 버튼을 클릭했을 때 생성된다.
     addScheduleButton 을 클릭했을 때에는 Schedule 타입의 get 객체가 전달되지 않아 null 이고, addUI 함수가 호출된다.
@@ -63,6 +65,10 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
         //picker settings
         setTimePickerInterval(picker_start);
         setTimePickerInterval(picker_end);
+        setStartTimePickerOnChanged();
+        setEndTimePickerOnChanged();
+        picker_end.setIs24HourView(true);
+        picker_start.setIs24HourView(true);
         ArrayList<String> DAY_INDEX = new ArrayList<>();
         DAY_INDEX.add("월");
         DAY_INDEX.add("화");
@@ -108,7 +114,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
         picker_end.setMinute(get.getEndTime().getMinute());
         day_spinner.setSelection(get.getDay());
 
-        // button 초기
+        // button 초기화
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +137,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                     finish();
                 } else {
                     //TimeInvalid
+                    generateSimpleAlertDialog("Time Invalid",Edit_AddTimeActivity.this);
                     return;
                 }
             }
@@ -165,6 +172,8 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                     finish();
                 } else {
                     //TimeInvalid
+                    generateSimpleAlertDialog("Time Invalid",Edit_AddTimeActivity.this);
+                    return;
                 }
 
             }
@@ -224,5 +233,37 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // startTime 이 endTime 을 넘지 않게 유지
+    private void setStartTimePickerOnChanged() {
+        picker_start.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                int endHour = picker_end.getHour();
+                if (hourOfDay > endHour) {
+                    picker_end.setHour(hourOfDay+1);
+                } else if (hourOfDay == endHour) {
+                    if (minute >= picker_end.getMinute()) {
+                        view.setHour(hourOfDay+1);
+                    }
+                }
+            }
+        });
+    }
+    private void setEndTimePickerOnChanged() {
+        picker_end.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                int startHour = picker_start.getHour();
+                if (hourOfDay < startHour) {
+                    picker_start.setHour(hourOfDay-1);
+                } else if (hourOfDay == startHour) {
+                    if (minute <= picker_start.getMinute()) {
+                        view.setHour(hourOfDay-1);
+                    }
+                }
+            }
+        });
     }
 }

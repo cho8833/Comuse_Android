@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.example.comuse.DataManager.FirebaseVar;
 import com.example.comuse.DataManager.ScheduleDataViewModel;
@@ -34,7 +36,7 @@ public class TimeTableFragment extends Fragment {
     Context context;
     TimetableView timeTable;
     ScheduleOnClickListener onClickListener;
-    Button addScheduleButton;
+    ImageView addScheduleButton;
     ScheduleDataViewModel scheduleDataViewModel;
     public TimeTableFragment() {
         // Required empty public constructor

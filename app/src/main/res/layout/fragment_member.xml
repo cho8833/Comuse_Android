@@ -7,6 +7,9 @@
         <variable
             name="members"
             type="androidx.lifecycle.MutableLiveData" />
+        <variable
+            name="myMemberData"
+            type="com.example.comuse.Member" />
     </data>
 
     <FrameLayout
@@ -41,18 +44,77 @@
                         android:textColor="#000000"
                         android:textSize="36sp" />
 
-                    <Switch
-                        android:id="@+id/inout_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp" />
-
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="User Info" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0"
+                    android:paddingTop="50dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="5dp"
+                    app:contentPadding="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textName_MemberFragment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="10dp"
+                            android:textColor="#000000"
+                            android:textSize="24sp"
+                            android:text="@{myMemberData.name, default=defaults}"/>
+
+                        <TextView
+                            android:id="@+id/textPosition_MemberFragment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="9"
+                            android:textSize="20sp"
+                            android:text="@{myMemberData.position, default=defaults}"/>
+
+                        <TextView
+                            android:id="@+id/buttonInOut_MemberFragment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="10dp"
+                            android:text="out"
+                            android:textColor="#2196F3"
+                            android:textSize="18sp"
+                            android:visibility="visible" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/bottom_menu_member" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_members"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     tools:item="members">
 
                 </androidx.recyclerview.widget.RecyclerView>

@@ -1,78 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Fragment.TimeTableFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".MainActivities.TimeTableActivity">
+        tools:context=".Fragment.TimeTableFragment">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <!-- TODO: Update blank fragment layout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            tools:context=".MainActivities.TimeTableActivity">
 
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="10"
-                    android:paddingBottom="10dp"
-                    android:text="@string/bottom_menu_timetable"
-                    android:textColor="#000000"
-                    android:textSize="36sp" />
-
-                <Button
-                    android:id="@+id/addSchedule_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-            </LinearLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                    android:orientation="horizontal">
 
-                    <com.github.tlaabs.timetableview.TimetableView
-                        android:id="@+id/timetable"
+                    <TextView
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10"
+                        android:paddingBottom="10dp"
+                        android:text="@string/bottom_menu_timetable"
+                        android:textColor="#000000"
+                        android:textSize="36sp" />
+
+                    <ImageView
+                        android:id="@+id/addSchedule_btn"
+                        android:layout_width="45dp"
                         android:layout_height="match_parent"
-                        app:cell_height="50dp"
-                        app:column_count="8"
-                        app:header_highlight_image_size="36dp"
-                        app:header_highlight_type="image"
+                        android:layout_weight="1"
+                        android:src="@android:drawable/ic_input_add"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
-                        app:header_title="@array/timetable_header_title"
-                        app:row_count="18"
-                        app:side_cell_width="30dp"
-                        app:start_time="9" />
                 </LinearLayout>
-            </ScrollView>
 
-        </LinearLayout>
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-</FrameLayout>
+                        <com.github.tlaabs.timetableview.TimetableView
+                            android:id="@+id/timetable"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:cell_height="50dp"
+                            app:column_count="8"
+                            app:header_highlight_image_size="36dp"
+                            app:header_highlight_type="image"
+
+                            app:header_title="@array/timetable_header_title"
+                            app:row_count="18"
+                            app:side_cell_width="30dp"
+                            app:start_time="9" />
+                    </LinearLayout>
+                </ScrollView>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>
