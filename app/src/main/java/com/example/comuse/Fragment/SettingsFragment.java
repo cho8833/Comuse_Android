@@ -172,13 +172,10 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (memberViewModel.getMe().getValue() == null) {
+            memberViewModel.getMemberData(context);
+        }
         updateUI();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        memberViewModel.saveMemberData(context);
     }
     private void removeAccount() {
         FirebaseVar.user.delete()
@@ -212,45 +209,51 @@ public class SettingsFragment extends Fragment {
                             builder.setView(container);
 
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    AuthCredential credential = EmailAuthProvider
-                                            .getCredential(FirebaseVar.user.getEmail(), editText.getText().toString());
-                                    FirebaseVar.user.reauthenticate(credential)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    Log.d(TAG, "User re-authenticated.");
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            AuthCredential credential = EmailAuthProvider
+                                                    .getCredential(FirebaseVar.user.getEmail(), editText.getText().toString());
+                                            FirebaseVar.user.reauthenticate(credential)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            Log.d(TAG, "User re-authenticated.");
 
 
-                                                    //Delete TimeTable Data
+                                                            //Delete TimeTable Data
 
 
-                                                    //Delete Local myMemberData
-                                                    memberViewModel.removeSavedData(context);
+                                                            //Delete Local myMemberData
+                                                            memberViewModel.removeSavedData(context);
 
-                                                    FirebaseVar.user.delete();
+                                                            FirebaseVar.user.delete();
 
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    FirebaseVar.user = null;
-                                                    FirebaseVar.membersListener = null;
-                                                    FirebaseVar.db = null;
-                                                    FirebaseVar.schedulesListener = null;
-                                                    memberViewModel.removeSavedData(context);
-                                                    Intent intent = new Intent(context, MainActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    context.startActivity(intent);
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    // reauthenticate failed
-                                                    generateSimpleAlertDialog(e.getMessage(), context);
-                                                }
-                                            });
-                                }
-                            });
+                                                            FirebaseAuth.getInstance().signOut();
+                                                            FirebaseVar.user = null;
+                                                            FirebaseVar.membersListener.remove();
+                                                            FirebaseVar.db = null;
+                                                            FirebaseVar.schedulesListener.remove();
+                                                            memberViewModel.removeSavedData(context);
+                                                            Intent intent = new Intent(context, MainActivity.class);
+                                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                            context.startActivity(intent);
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            // reauthenticate failed
+                                                            generateSimpleAlertDialog(e.getMessage(), context);
+                                                        }
+                                                    });
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
                             builder.show();
                         }
                     }

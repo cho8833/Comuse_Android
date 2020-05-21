@@ -163,7 +163,7 @@ public class Edit_AddTimeActivity extends AppCompatActivity {
                 day = day_spinner.getSelectedItemPosition();
                 if(checkTimeValid(start_hour,start_min,end_hour,end_min,day,title)) {
                     Schedule newData = new Schedule();
-                    newData.setProfessorName(FirebaseVar.user.getUid());
+                    newData.setProfessorName(FirebaseVar.user.getEmail());
                     newData.setDay(day);
                     newData.setStartTime(new Time(start_hour,start_min));
                     newData.setEndTime(new Time(end_hour,end_min));

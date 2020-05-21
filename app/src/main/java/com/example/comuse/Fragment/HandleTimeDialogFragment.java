@@ -23,7 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 /*/
     TimeTable 의 Schedule 을 클릭했을 때 발생하는 Dialog
-    Schedule.professorName 과 user.uid 가 일치해야 Dialog 가 발생한다.
+    Schedule.professorName 과 user.email 가 일치해야 Dialog 가 발생한다.
  */
 public class HandleTimeDialogFragment extends BottomSheetDialogFragment {
 

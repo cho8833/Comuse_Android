@@ -86,7 +86,6 @@ public class TimeTableFragment extends Fragment {
             public void onClick(View v) {
                 if (FirebaseVar.user != null && FirebaseVar.db != null) {
                     Intent intent = new Intent(context, Edit_AddTimeActivity.class);
-                    intent.putExtra("scheduleDatas", scheduleDataViewModel.schedules);
                     startActivity(intent);
                 }
             }

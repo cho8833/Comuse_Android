@@ -31,6 +31,6 @@ public class ScheduleOnClickListener implements TimetableView.OnStickerSelectedL
         }
         HandleTimeDialogFragment dialog = new HandleTimeDialogFragment(context,schedule);
         FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
-        dialog.show(fm,"handleTimeDailog");
+        dialog.show(fm,"handleTimeDialog");
     }
 }

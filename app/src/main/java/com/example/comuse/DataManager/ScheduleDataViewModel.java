@@ -37,7 +37,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 
     classTitle : schedule 제목 저장, 시간표에 표시되는 문자열
     classPlace : 시간표에 표시될 때 classTitle 밑에 표시되는 문자열, 현재는 쓰지않아 null 로 저장 (추후에 schedule 작성자 이름을 저장하여 시간표에 표시 고려중)
-    professorName : 작성자의 uid 저장, 자신이 작성한 schedule 인지 검사하기 위해 사용
+    professorName : 작성자의 email 저장, 자신이 작성한 schedule 인지 검사하기 위해 사용
     day : day index 저장
     startTime : schedule 시작 시간 저장
     endTime : schedule 종료 시간 저장
@@ -82,7 +82,7 @@ public class ScheduleDataViewModel extends ViewModel {
                     });
         }
     }
-    //FireStore/TimeTable Collection 의 특정 document property 의 정보 수정
+    //FireStore/TimeTable Collection 의 특정 document 의 property 수정
     public void updateScheduleData(final Schedule update, String getDocumentName) {
         /*
             Document 의 이름은 데이터의 시작시간, 종료시간, 요일로 저장된다.

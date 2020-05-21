@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
             mAuth = FirebaseAuth.getInstance();
 
         } catch (Exception e) {
-            Log.e(TAG,"splashactivity error",e);
+            Log.e(TAG,"SplashActivity error",e);
         }
     }
     @Override

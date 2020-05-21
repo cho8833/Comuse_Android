@@ -27,14 +27,14 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
     class Member
         private String name;            // 멤버의 이름, FirebaseUser.name 저장
 
-        private String uid;             // Member class 의 고유데이터
-                                        // FireStore Database 의 User 의 데이터를 저장할 때 document name 을 uid 로 저장한다.
-                                        // Schedule 을 생성할 때 작성자 구분을 위해 professorName property 에 uid 를 저장한다.
+        private String email;             // Member class 의 고유데이터
+                                        // FireStore Database 의 User 의 데이터를 저장할 때 document name 을 email 로 저장한다.
+                                        // Schedule 을 생성할 때 작성자 구분을 위해 professorName property 에 email 를 저장한다.
 
         private Boolean inoutStatus;    // 멤버의 inout 상터태
         private String position;        // 멤버의 포지션, Setting 에서 edit 가능
 
-    Member Data 는 FireStore/Members Collection 에 문서 이름은 Member.uid 로 저장된다.
+    Member Data 는 FireStore/Members Collection 에 문서 이름은 Member.email 로 저장된다.
     자신의 Member Data 는 MutableLiveData 타입의 me 라는 객체에 저장이 되고, SharedPreference 기능을 통해 local 에 save 하고 load 하여
     FireStore 데이터 통신의 지연시간을 없앤다.
     따라서 me의 데이터가 수정되려면 DataBase 의 데이터 update, Local 의 데이터 update, me 객체의 데이터의 update 가 필요하다.
@@ -60,7 +60,7 @@ public class MemberDataViewModel extends ViewModel {
         } else {
             if (FirebaseVar.user != null) {
                 if (FirebaseVar.db != null) {
-                    FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
+                    FirebaseVar.db.collection("Members").document(FirebaseVar.user.getEmail())
                             .get()
                             .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
@@ -90,12 +90,12 @@ public class MemberDataViewModel extends ViewModel {
             }
         }
     }
-    // FireStore/Members Collection 에 Member.uid 의 이름으로 문서 저장
+    // FireStore/Members Collection 에 Member.email 의 이름으로 문서 생
     public void addMemberData(final Context context, Boolean inoutStatus, String position) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
-                final Member newData = new Member(FirebaseVar.user.getDisplayName(),FirebaseVar.user.getUid(),inoutStatus,position);
-                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
+                final Member newData = new Member(FirebaseVar.user.getDisplayName(),FirebaseVar.user.getEmail(),inoutStatus,position);
+                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getEmail())
                         .set(newData)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -111,7 +111,7 @@ public class MemberDataViewModel extends ViewModel {
     public void removeMemberData(final Context context) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
-                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
+                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getEmail())
                         .delete()
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -127,14 +127,24 @@ public class MemberDataViewModel extends ViewModel {
     public void updateInOut(final Context context, final Boolean inoutStatus) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
-                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
+                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getEmail())
                         .update("inoutStatus",inoutStatus)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.setValue(new Member(me.getValue().getName(),me.getValue().getUid(),inoutStatus,me.getValue().getPosition())); // me 객체 데이터 update
+                                me.setValue(new Member(me.getValue().getName(),me.getValue().getEmail(),inoutStatus,me.getValue().getPosition())); // me 객체 데이터 update
                                 updateSavedData(context,inoutStatus,null);  // Local 데이터 update
 
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // error occurred updating inoutStatus
+                                // case1 : no Document
+                                if (((FirebaseFirestoreException)e).getCode() == FirebaseFirestoreException.Code.NOT_FOUND) {
+                                    addMemberData(context,false,null);
+                                }
                             }
                         });
             }
@@ -144,12 +154,12 @@ public class MemberDataViewModel extends ViewModel {
     public void updatePosition(final Context context, final String position) {
         if (FirebaseVar.user != null) {
             if (FirebaseVar.db != null) {
-                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getUid())
+                FirebaseVar.db.collection("Members").document(FirebaseVar.user.getEmail())
                         .update("position",position)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                me.setValue(new Member(me.getValue().getName(),me.getValue().getUid(),me.getValue().getInoutStatus(),position));    // me 객체 데이터 update
+                                me.setValue(new Member(me.getValue().getName(),me.getValue().getEmail(),me.getValue().getInoutStatus(),position));    // me 객체 데이터 update
                                 updateSavedData(context,null,position); // Local 데이터 update
 
                             }
@@ -166,7 +176,7 @@ public class MemberDataViewModel extends ViewModel {
             editor.putString("name",me.getValue().getName());
             editor.putString("position",me.getValue().getPosition());
             editor.putBoolean("inoutStatus",me.getValue().getInoutStatus());
-            editor.putString("uid",me.getValue().getUid());
+            editor.putString("email",me.getValue().getEmail());
             editor.commit();
 
         }
@@ -175,11 +185,11 @@ public class MemberDataViewModel extends ViewModel {
         if(me == null) {
             SharedPreferences sp = context.getSharedPreferences("me",Context.MODE_PRIVATE);
             String name = sp.getString("name",null);
-            String uid = sp.getString("uid",null);
+            String email = sp.getString("email",null);
             Boolean inoutStatus = sp.getBoolean("inoutStatus",false);
             String position = sp.getString("position",null);
-            if (name != null && uid != null) {
-                Member savedData = new Member(name, uid, inoutStatus, position);
+            if (name != null && email != null) {
+                Member savedData = new Member(name, email, inoutStatus, position);
                 me.setValue(savedData);
                 return true;
             } else {
@@ -233,7 +243,7 @@ public class MemberDataViewModel extends ViewModel {
                                             break;
                                         case MODIFIED:
                                             for (Member compare : members) {
-                                                if (compare.getUid().equals(data.getUid())) {
+                                                if (compare.getEmail().equals(data.getEmail())) {
                                                     int index = members.indexOf(compare);
                                                     members.remove(index);
                                                     members.add(index,data);
@@ -244,7 +254,7 @@ public class MemberDataViewModel extends ViewModel {
                                             break;
                                         case REMOVED:
                                             for (Member compare : members) {
-                                                if (compare.getUid().equals(dc.getDocument().toObject(Member.class).getUid())) {
+                                                if (compare.getEmail().equals(dc.getDocument().toObject(Member.class).getEmail())) {
                                                     int position = members.indexOf(compare);
                                                     members.remove(position);
                                                     break;
